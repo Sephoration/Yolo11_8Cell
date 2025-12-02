@@ -1,0 +1,8 @@
+names:
+- BNE
+- neutrophil
+- SNE
+nc: 3
+path: c:\Users\Eplis\Desktop\YOLO_8Cell
+train: small_datasets/neutrophil/images
+val: small_datasets/neutrophil/images

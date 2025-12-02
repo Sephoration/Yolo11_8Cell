@@ -1,0 +1,6 @@
+names:
+- platelet
+nc: 1
+path: c:\Users\Eplis\Desktop\YOLO_8Cell
+train: small_datasets/platelet/images
+val: small_datasets/platelet/images

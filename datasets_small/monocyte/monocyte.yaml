@@ -1,0 +1,6 @@
+names:
+- monocyte
+nc: 1
+path: c:\Users\Eplis\Desktop\YOLO_8Cell
+train: small_datasets/monocyte/images
+val: small_datasets/monocyte/images
