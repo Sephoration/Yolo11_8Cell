@@ -6,6 +6,8 @@ import logging
 import pandas as pd
 from datetime import datetime
 import yaml
+# 导入路径管理模块
+from path_manager import get_path, get_root_dir
 
 # 设置日志记录
 log_dir = os.path.dirname(os.path.abspath(__file__))
@@ -48,12 +50,11 @@ logger.info(f"类别数量: {len(ALL_CLASSES)}")
 
 def get_relative_paths():
     """
-    获取基于脚本位置的相对路径
+    获取基于项目根目录的路径字典
     """
-    # 获取当前脚本所在目录（full_models）
+    # 使用路径管理模块获取路径
+    base_dir = get_root_dir()
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    # 获取YOLO_8Cell根目录（full_models的父目录）
-    base_dir = os.path.abspath(os.path.join(current_dir, ".."))
     
     logger.info(f"当前脚本目录: {current_dir}")
     logger.info(f"项目根目录: {base_dir}")
@@ -61,8 +62,8 @@ def get_relative_paths():
     return {
         "base_dir": base_dir,
         "full_models_dir": current_dir,  # full_models目录
-        "full_datasets_dir": os.path.join(base_dir, "full_datasets"),
-        "small_datasets_dir": os.path.join(base_dir, "small_datasets")
+        "full_datasets_dir": get_path("datasets_full"),
+        "small_datasets_dir": get_path("datasets_small")
     }
 
 def generate_unified_data_yaml(paths):
@@ -70,7 +71,7 @@ def generate_unified_data_yaml(paths):
     生成统一的数据配置文件，包含所有13种类别
     """
     yaml_content = {
-        "path": paths["full_datasets_dir"],
+        "path": paths["full_datasets_dir"],  # 使用相对路径管理
         "train": "train",  # 后续会创建统一的训练集目录
         "val": "val",  # 后续会创建统一的验证集目录
         "test": "test",  # 可选
@@ -187,7 +188,7 @@ def train_unified_model(paths, yaml_path):
     训练统一的yolo11m模型
     """
     # 模型路径 - 先检查是否已有下载的yolo11m.pt
-    model_path = os.path.join(paths["base_dir"], "yolo11m.pt")
+    model_path = get_path("yolo11m")
     if not os.path.exists(model_path):
         logger.info(f"yolo11m.pt 不存在，将自动下载")
         model_path = "yolo11m.pt"  # 使用ultralytics内置的模型路径，会自动下载

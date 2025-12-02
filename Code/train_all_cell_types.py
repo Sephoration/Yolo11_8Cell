@@ -2,6 +2,8 @@ from ultralytics import YOLO
 import os
 import time
 import pandas as pd
+# 导入路径管理模块
+from path_manager import get_path, get_root_dir
 
 
 def train_cell_type(cell_type):
@@ -10,17 +12,16 @@ def train_cell_type(cell_type):
     print(f"开始训练 {cell_type} 模型")
     print(f"{'=' * 60}")
 
-    # 获取当前脚本所在目录（small_models）
+    # 使用路径管理模块获取目录
+    base_dir = get_root_dir()
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # 获取YOLO_8Cell根目录（small_models的父目录）
-    base_dir = os.path.abspath(os.path.join(script_dir, ".."))
     
     print(f"当前脚本目录: {script_dir}")
     print(f"项目根目录: {base_dir}")
     
     # 构建模型和数据集路径
     model_path = os.path.join(script_dir, "yolo11n.pt")
-    data_yaml = os.path.join(base_dir, "small_datasets", cell_type, f"{cell_type}.yaml")
+    data_yaml = get_path("datasets_small", cell_type, f"{cell_type}.yaml")
     output_dir = script_dir
     
     # 打印所有关键路径信息
@@ -30,7 +31,7 @@ def train_cell_type(cell_type):
     
     # 检查YAML文件
     if not os.path.exists(data_yaml):
-        alt_yaml = os.path.join(base_dir, "small_datasets", cell_type, "data.yaml")
+        alt_yaml = get_path("datasets_small", cell_type, "data.yaml")
         if os.path.exists(alt_yaml):
             data_yaml = alt_yaml
             print(f"使用替代配置文件: {alt_yaml}")
@@ -84,10 +85,8 @@ def train_cell_type(cell_type):
 
 def get_best_map50(cell_type):
     """获取模型的最佳mAP50值"""
-    # 获取当前脚本所在目录
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # 构建结果文件路径
-    results_csv = os.path.join(script_dir, f"{cell_type}_train", "results.csv")
+    # 使用路径管理模块构建结果文件路径
+    results_csv = get_path("models_small", f"{cell_type}_train", "results.csv")
     
     if not os.path.exists(results_csv):
         print(f"警告: 结果文件不存在: {results_csv}")
@@ -105,12 +104,10 @@ def get_best_map50(cell_type):
 
 def evaluate_model(cell_type):
     """评估训练完成的模型"""
-    # 获取当前脚本所在目录
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    # 构建评估所需的路径
-    train_dir = os.path.join(script_dir, f"{cell_type}_train")
-    best_model_path = os.path.join(train_dir, "weights", "best.pt")
-    results_csv = os.path.join(train_dir, "results.csv")
+    # 使用路径管理模块构建评估所需的路径
+    train_dir = get_path("models_small", f"{cell_type}_train")
+    best_model_path = get_path("models_small", f"{cell_type}_train", "weights", "best.pt")
+    results_csv = get_path("models_small", f"{cell_type}_train", "results.csv")
     
     print(f"评估模型路径: {best_model_path}")
     print(f"结果文件路径: {results_csv}")
@@ -148,14 +145,13 @@ def main():
         "lymphocyte", "monocyte", "neutrophil", "platelet"
     ]
 
-    # 获取当前脚本所在目录
+    # 使用路径管理模块获取目录
+    base_dir = get_root_dir()
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # 获取YOLO_8Cell根目录
-    base_dir = os.path.abspath(os.path.join(script_dir, ".."))
     
     # 构建项目相关目录路径
-    small_datasets_dir = os.path.join(base_dir, "small_datasets")
-    full_datasets_dir = os.path.join(base_dir, "full_datasets")
+    small_datasets_dir = get_path("datasets_small")
+    full_datasets_dir = get_path("datasets_full")
 
     print(f"\n{'=' * 60}")
     print(f"开始批量训练和评估 {len(cell_types)} 种细胞类型")
