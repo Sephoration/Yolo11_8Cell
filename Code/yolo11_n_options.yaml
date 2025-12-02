@@ -1,0 +1,31 @@
+# YOLO11n 训练配置文件
+
+# 训练参数
+training:
+  epochs: 30           # 训练轮数
+  imgsz: 416           # 输入图像大小
+  batch: 6             # 批次大小
+  device: 0            # GPU设备ID，使用0表示第一个GPU
+  workers: 0           # 数据加载工作进程数
+  amp: false           # 是否使用自动混合精度训练
+  verbose: true        # 是否显示详细训练日志
+  patience: 10         # 早停耐心值
+  freeze: 5            # 冻结的层数
+  save: true           # 是否保存模型
+
+# 评估参数
+evaluation:
+  metrics: ["mAP50", "precision", "recall"]  # 评估指标
+  map_threshold: 0.5   # mAP计算的IoU阈值
+
+# 模型参数
+model:
+  type: "yolo11n"      # 模型类型
+  pretrained: true     # 是否使用预训练权重
+  weights: ""          # 自定义权重路径，留空使用默认路径
+
+# 性能阈值
+performance:
+  excellent: 0.90      # 优秀性能阈值
+  good: 0.70           # 良好性能阈值
+  average: 0.50        # 一般性能阈值

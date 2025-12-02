@@ -4,8 +4,15 @@ import os
 import time
 import logging
 from datetime import datetime
-# 导入路径管理模块
-from path_manager import get_path, get_root_dir
+# 导入路径配置文件
+import sys
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from paths_config import (
+    PROJECT_ROOT,
+    DATASETS_SMALL,
+    DATASETS_FULL,
+    MODELS_SMALL
+)
 
 # 设置日志记录
 log_dir = os.path.dirname(os.path.abspath(__file__))
@@ -38,18 +45,16 @@ def get_relative_paths():
     """
     获取基于项目根目录的路径字典
     """
-    # 使用路径管理模块获取路径
-    base_dir = get_root_dir()
     current_dir = os.path.dirname(os.path.abspath(__file__))
     
     logger.info(f"当前脚本目录: {current_dir}")
-    logger.info(f"项目根目录: {base_dir}")
+    logger.info(f"项目根目录: {PROJECT_ROOT}")
     
     return {
-        "base_dir": base_dir,
-        "small_models_dir": get_path("small_models"),
-        "full_datasets_dir": get_path("full_datasets"),
-        "small_datasets_dir": get_path("small_datasets")
+        "base_dir": PROJECT_ROOT,
+        "small_models_dir": MODELS_SMALL,
+        "full_datasets_dir": DATASETS_FULL,
+        "small_datasets_dir": DATASETS_SMALL
     }
 
 def auto_annotate_cell_type(cell_type, paths, conf_threshold=0.5, class_indices=None):
@@ -69,9 +74,9 @@ def auto_annotate_cell_type(cell_type, paths, conf_threshold=0.5, class_indices=
     cell_chinese = cell_type["chinese_name"]
     
     # 构建模型和数据集路径
-    model_path = get_path("small_models", f"{cell_name}_train", "weights", "best.pt")
-    source_dir = get_path("full_datasets", cell_name, "images")
-    output_dir = get_path("full_datasets", cell_name)
+    model_path = f"{MODELS_SMALL}/{cell_name}_train/weights/best.pt"
+    source_dir = f"{DATASETS_FULL}/{cell_name}/images"
+    output_dir = f"{DATASETS_FULL}/{cell_name}"
     
     # 检查必要的路径是否存在
     if not os.path.exists(model_path):
@@ -83,7 +88,7 @@ def auto_annotate_cell_type(cell_type, paths, conf_threshold=0.5, class_indices=
         return {"success": False, "cell_type": cell_name, "message": "图片目录不存在"}
     
     # 创建输出标签目录
-    labels_dir = get_path("full_datasets", cell_name, "labels")
+    labels_dir = f"{DATASETS_FULL}/{cell_name}/labels"
     os.makedirs(labels_dir, exist_ok=True)
     
     logger.info(f"开始标注 {cell_chinese} ({cell_name}) 数据集...")
