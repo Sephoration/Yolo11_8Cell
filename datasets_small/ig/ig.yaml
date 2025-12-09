@@ -1,9 +1,0 @@
-names:
-- ig
-- MMY
-- PMY
-- MY
-nc: 4
-path: c:\Users\Eplis\Desktop\YOLO_8Cell
-train: small_datasets/ig/images
-val: small_datasets/ig/images
